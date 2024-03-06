@@ -83,7 +83,7 @@ export default function DashboardTemp() {
                   <ul className="py-1" role="none">
                     <li>
                       <a
-                        href="/dashboard"
+                        href="/play-ground"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                         role="menuitem"
                       >
@@ -232,7 +232,7 @@ export default function DashboardTemp() {
             </div>
             <div className="bg-gray-100 py-6 px-4  border-t border-gray-200">
               <a
-                href="/dashboard"
+                href="/play-ground"
                 className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
               >
                 Go the Playground

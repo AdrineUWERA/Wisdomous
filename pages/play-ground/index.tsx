@@ -12,11 +12,21 @@ interface ComponentsState {
   tone: boolean;
 }
 
+interface ComponentsTextState {
+  persona: string;
+  context: string;
+  task: string;
+  format: string;
+  exemplar: string;
+  tone: string;
+}
+
 export default function Dashboard() {
   const GENERATED_SECRET =
     "24a94760dfe00c8522c9090df66cd674:e197d296ca2fdb82a7fe2b79df5d35c6cc71c891b9ac713a8ec9c202e1376576";
 
   const [originalPrompt, setOriginalPrompt] = useState<string>("");
+  const [consolidatedPrompt, setConsolidatedPrompt] = useState<string>("");
   const [optimized_prompt, setOptimizedPrompt] = useState<
     { promptOptimized: string }[]
   >([]);
@@ -27,30 +37,22 @@ export default function Dashboard() {
   const [loading, setLoading] = useState<boolean>(false);
 
   const [components, setComponents] = useState<ComponentsState>({
-    persona: false,
-    context: false,
     task: false,
-    format: false,
+    context: false,
     exemplar: false,
+    persona: false,
+    format: false,
     tone: false,
   });
 
-  //   const [consolidatedPrompt, setConsolidatedPrompt] = useState<string>("");
-
-  //   const consolidatePrompt = () => {
-  //     const selectedComponents = Object.keys(components).filter(
-  //       (component) => components[component as keyof ComponentsState]
-  //     );
-  //     // const selectedPromptComponents = selectedComponents.map(
-  //     //   (component) =>
-  //     //     `${component}: ${
-  //     //       componentsTexts[component as keyof typeof componentsTexts]
-  //     //     }`
-  //     // );
-  //     const consolidated = `${originalPrompt} ${selectedComponents.join(" ")}`;
-  //     setConsolidatedPrompt(consolidated);
-  //     console.log(consolidatedPrompt);
-  //   };
+  const [componentsText, setComponentsText] = useState<ComponentsTextState>({
+    task: "",
+    context: "",
+    exemplar: "",
+    persona: "",
+    format: "",
+    tone: "",
+  });
 
   const handleCheckboxChange = (component: keyof ComponentsState) => {
     setComponents((prevComponents) => ({
@@ -64,6 +66,7 @@ export default function Dashboard() {
   const handleTabClick = (tabIndex: number) => {
     setActiveTab(tabIndex);
   };
+
   const optimize_prompt = async () => {
     setLoading(true);
     try {
@@ -95,6 +98,27 @@ export default function Dashboard() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const generateConsolidatedPrompt = () => {
+    const orderedComponents: (keyof ComponentsState)[] = [
+      "persona",
+      "context",
+      "task",
+      "exemplar",
+      "format",
+      "tone",
+    ];
+
+    let consolidatedPrompt: string = "";
+
+    orderedComponents.forEach((component) => {
+      if (components[component] && componentsText[component]) {
+        consolidatedPrompt += componentsText[component] + ". ";
+      }
+    });
+
+    setOriginalPrompt(consolidatedPrompt.trim());
   };
 
   const handleSubmit = async () => {
@@ -391,6 +415,13 @@ export default function Dashboard() {
                     {components[component as keyof ComponentsState] && (
                       <textarea
                         placeholder={`Enter ${component}`}
+                        onChange={(e) => {
+                          setComponentsText((prev) => ({
+                            ...prev,
+                            [component]: e.target.value,
+                          }));
+                          generateConsolidatedPrompt();
+                        }}
                         className="block w-[95%] mt-3 p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       />
                     )}
@@ -399,8 +430,10 @@ export default function Dashboard() {
               </div>
               <textarea
                 onChange={(e) => setOriginalPrompt(e.target.value)}
+                value={originalPrompt}
                 className="p-4 w-[48%] h-36 block border border-gray-200 rounded-lg text-sm disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
                 placeholder="Enter your original prompt..."
+                disabled={Object.values(components).some((value) => value)}
               ></textarea>
             </div>
           </div>

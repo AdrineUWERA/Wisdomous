@@ -83,7 +83,7 @@ export default function DashboardTemp() {
                   <ul className="py-1" role="none">
                     <li>
                       <a
-                        href="/dashboard"
+                        href="/play-ground"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                         role="menuitem"
                       >
@@ -314,7 +314,7 @@ export default function DashboardTemp() {
               </div>
 
               <a
-                href="/dashboard"
+                href="/play-ground"
                 className="w-full mt-4 py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
               >
                 Save changes
