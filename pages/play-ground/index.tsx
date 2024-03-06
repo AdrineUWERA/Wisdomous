@@ -1,5 +1,5 @@
 import Sidebar from "@/components/dash_sidebar";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import JinaAI from "jinaai";
 import axios from "axios";
 
@@ -23,7 +23,7 @@ interface ComponentsTextState {
 
 export default function Dashboard() {
   const GENERATED_SECRET =
-    "24a94760dfe00c8522c9090df66cd674:e197d296ca2fdb82a7fe2b79df5d35c6cc71c891b9ac713a8ec9c202e1376576";
+    "4e9315aa3170e81ef30ae746554eb6c9:83e14e91ec04d0a67d5b82702e0257ed9204d16176509b477e3865a71f4418d4";
 
   const [originalPrompt, setOriginalPrompt] = useState<string>("");
   const [consolidatedPrompt, setConsolidatedPrompt] = useState<string>("");
@@ -59,6 +59,15 @@ export default function Dashboard() {
       ...prevComponents,
       [component]: !prevComponents[component],
     }));
+
+    if (!components[component]) {
+      setComponentsText((prev) => ({
+        ...prev,
+        [component]: "",
+      }));
+    }
+
+    generateConsolidatedPrompt();
   };
 
   const prompts: any[] = [];
@@ -87,9 +96,10 @@ export default function Dashboard() {
         }
       );
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error:", error);
-      setErrorMessage("An error occurred while optimizing the prompt.");
+      setErrorMessage(error.response.data.error.message);
+      // setErrorMessage("An error occurred while optimizing the prompt.");
       setIsError(true);
       setTimeout(() => {
         setIsError(false);
@@ -142,6 +152,10 @@ export default function Dashboard() {
       console.error("Failed to copy:", error);
     }
   };
+
+  useEffect(() => {
+    generateConsolidatedPrompt();
+  }, [componentsText, components]);
 
   return (
     <div>
@@ -432,7 +446,11 @@ export default function Dashboard() {
                 onChange={(e) => setOriginalPrompt(e.target.value)}
                 value={originalPrompt}
                 className="p-4 w-[48%] h-36 block border border-gray-200 rounded-lg text-sm disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
-                placeholder="Enter your original prompt..."
+                placeholder={
+                  Object.values(components).some((value) => value)
+                    ? ""
+                    : "Enter your original prompt..."
+                }
                 disabled={Object.values(components).some((value) => value)}
               ></textarea>
             </div>
