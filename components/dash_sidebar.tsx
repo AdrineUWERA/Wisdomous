@@ -2,6 +2,7 @@ import logo from "../images/logo.png";
 import user from "../images/user.png";
 import Image from "next/image";
 import { useState } from "react";
+import { logout } from "@/helpers/auth";
 
 export default function Sidebar() {
   const [isDropdown, setIsDropdown] = useState(false);
@@ -100,13 +101,13 @@ export default function Sidebar() {
                       </a>
                     </li>
                     <li>
-                      <a
-                        href="/"
-                        className="block px-4 py-2 text-sm text-blue-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                      <button
+                        onClick={logout}
+                        className="w-full block px-4 py-2 text-left text-sm text-blue-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                         role="menuitem"
                       >
                         Sign out
-                      </a>
+                      </button>
                     </li>
                   </ul>
                 </div>
